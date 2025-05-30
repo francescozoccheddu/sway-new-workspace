@@ -21,6 +21,7 @@ fn main() -> Result<(), swayipc::Error> {
         .about("A command to create new Sway workpaces")
         .subcommand(Command::new("open").about("Open a new workspace"))
         .subcommand(Command::new("move").about("Move the current container to a new workspace"))
+        .subcommand(Command::new("move-and-open").about("Move the current container to a new workspace and open it"))
         .subcommand_required(true)
         .get_matches();
     let mut conn = swayipc::Connection::new()?;
@@ -30,6 +31,10 @@ fn main() -> Result<(), swayipc::Error> {
             conn.run_command(format!("workspace {}", next_id))?;
         }
         "move" => {
+            let next_id = next_workspace_number(&mut conn)?;
+            conn.run_command(format!("move container to workspace {}", next_id))?;
+        }
+        "move-and-open" => {
             let next_id = next_workspace_number(&mut conn)?;
             conn.run_command(format!("move container to workspace {}", next_id))?;
             conn.run_command(format!("workspace {}", next_id))?;
